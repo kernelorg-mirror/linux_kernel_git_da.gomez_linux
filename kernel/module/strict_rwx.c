@@ -10,6 +10,7 @@
 #include <linux/vmalloc.h>
 #include <linux/set_memory.h>
 #include <linux/execmem.h>
+#include <linux/bpf.h>
 #include "internal.h"
 
 static int module_set_memory(const struct module *mod, enum mod_mem_type type,
@@ -72,6 +73,7 @@ int module_enable_rodata_ro_after_init(const struct module *mod)
 
 	return module_set_memory(mod, MOD_RO_AFTER_INIT, set_memory_ro);
 }
+ALLOW_ERROR_INJECTION(module_enable_rodata_ro_after_init, ERRNO);
 
 int module_enable_data_nx(const struct module *mod)
 {
