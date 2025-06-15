@@ -13,6 +13,7 @@ enum modfunc {
 	COMPLETE_FORMATION = 1,
 	DO_INIT_MODULE,
 	MODULE_ENABLE_RODATA_AFTER_INIT,
+	MODULE_MEMORY_ALLOC,
 };
 
 struct event {
@@ -32,6 +33,8 @@ static inline const char *modfunc_to_string(enum modfunc fc)
 		return "do_init_module()";
 	case MODULE_ENABLE_RODATA_AFTER_INIT:
 		return "module_enable_rodata_after_init()";
+	case MODULE_MEMORY_ALLOC:
+		return "module_memory_alloc()";
 	default:
 		return "unknown";
 	}

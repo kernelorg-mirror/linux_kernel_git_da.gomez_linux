@@ -12,6 +12,8 @@ const volatile bool set_errinj = false;
 const volatile int targ_errinj = 0;
 const volatile bool filter_modfunc = false;
 const volatile int targ_modfunc = 0;
+const volatile bool filter_mod_mem_type = false;
+const volatile int targ_mod_mem_type = 0;
 
 char LICENSE[] SEC("license") = "GPL";
 
@@ -124,4 +126,14 @@ int BPF_KPROBE(module_enable_rodata_ro_after_init, struct module *mod)
 {
 	return module_error_injection(ctx, mod,
 				      MODULE_ENABLE_RODATA_AFTER_INIT);
+}
+
+SEC("kprobe/module_memory_alloc")
+int BPF_KPROBE(module_memory_alloc, struct module *mod, enum mod_mem_type type)
+{
+	if (!filter_mod_mem_type ||
+	    (filter_mod_mem_type && targ_mod_mem_type != type))
+		return false;
+
+	return module_error_injection(ctx, mod, MODULE_MEMORY_ALLOC);
 }

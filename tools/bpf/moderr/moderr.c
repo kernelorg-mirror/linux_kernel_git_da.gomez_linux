@@ -17,6 +17,8 @@ static struct env {
 	enum modfunc func;
 	bool trace;
 	int errinj;
+	int mod_mem_type;
+	bool mem_type_enabled;
 } env;
 
 const char *argp_program_version = "moderr 0.1";
@@ -32,6 +34,8 @@ static volatile bool exiting = false;
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof(*(x)))
 
+#define KEY_MEMTYPE (CHAR_MAX + 1)
+
 static const struct argp_option opts[] = {
 	{ NULL, 0, NULL, 0, "Common filter:", 1 },
 	{ "modname", 'm', "MODNAME", 0, "Trace this module name only", 1 },
@@ -42,16 +46,20 @@ static const struct argp_option opts[] = {
 	{ "list", 'l', NULL, 0, "List available module functions", 3 },
 	{ "trace", 't', NULL, 0, "Enable trace output", 3 },
 	{ "verbose", 'v', NULL, 0, "Verbose debug output", 3 },
+	{ NULL, 0, NULL, 0, "module_memory_alloc() filters:", 4 },
+	{ "memtype", KEY_MEMTYPE, "MOD_MEM_TYPE", 0,
+	  "Trace this memory type only (mod_mem_type)", 4 },
 	{ NULL, 'h', NULL, OPTION_HIDDEN, "Show full help", -1 },
 	{}
 };
 
 static void help_modfunc(void)
 {
-	printf("\nAvailable modfunc options are:\n"
+	printf("Available modfunc options are:\n"
 	       "- complete_formation\n"
 	       "- do_init_module\n"
-	       "- module_enable_rodata_ro_after_init\n\n");
+	       "- module_enable_rodata_ro_after_init\n"
+	       "- module_memory_alloc\n\n");
 }
 
 static enum modfunc string_to_modfunc(char *arg)
@@ -65,6 +73,9 @@ static enum modfunc string_to_modfunc(char *arg)
 	if (strncmp(arg, "module_enable_rodata_ro_after_init", strlen(arg)) ==
 	    0)
 		return MODULE_ENABLE_RODATA_AFTER_INIT;
+
+	if (strncmp(arg, "module_memory_alloc", strlen(arg)) == 0)
+		return MODULE_MEMORY_ALLOC;
 
 	return UNKNOWN;
 }
@@ -106,6 +117,10 @@ static error_t parse_arg(int key, char *arg, struct argp_state *state)
 		break;
 	case 't':
 		env.trace = true;
+		break;
+	case KEY_MEMTYPE:
+		env.mod_mem_type = atoi(arg);
+		env.mem_type_enabled = true;
 		break;
 	case ARGP_KEY_ARG:
 		argp_usage(state);
@@ -186,6 +201,11 @@ int main(int argc, char **argv)
 
 	obj->rodata->filter_modfunc = true;
 	obj->rodata->targ_modfunc = env.func;
+
+	if (env.func == MODULE_MEMORY_ALLOC) {
+		obj->rodata->filter_mod_mem_type = env.mem_type_enabled;
+		obj->rodata->targ_mod_mem_type = env.mod_mem_type;
+	}
 
 	if (env.errinj) {
 		obj->rodata->set_errinj = true;

@@ -1280,7 +1280,8 @@ void __weak module_arch_freeing_init(struct module *mod)
 {
 }
 
-static int module_memory_alloc(struct module *mod, enum mod_mem_type type)
+static noinline int module_memory_alloc(struct module *mod,
+					enum mod_mem_type type)
 {
 	unsigned int size = PAGE_ALIGN(mod->mem[type].size);
 	enum execmem_type execmem_type;
@@ -1327,6 +1328,7 @@ static int module_memory_alloc(struct module *mod, enum mod_mem_type type)
 
 	return 0;
 }
+ALLOW_ERROR_INJECTION(module_memory_alloc, ERRNO);
 
 static void module_memory_restore_rox(struct module *mod)
 {
