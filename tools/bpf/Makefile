@@ -109,6 +109,9 @@ bpftool:
 bpftool_install:
 	$(call descend,bpftool,install)
 
+moderr_install:
+	$(call descend,moderr,install)
+
 bpftool_clean:
 	$(call descend,bpftool,clean)
 

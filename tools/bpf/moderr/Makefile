@@ -93,3 +93,16 @@ $(BPFOBJ): $(wildcard $(LIBBPF_SRC)/*.[ch] $(LIBBPF_SRC)/Makefile) | $(BPFOBJ_OU
 
 $(DEFAULT_BPFTOOL): | $(BPFTOOL_OUTPUT)
 	$(Q)$(MAKE) $(submake_extras) -C ../bpftool OUTPUT=$(BPFTOOL_OUTPUT) bootstrap
+
+INSTALL ?= install
+
+install-bin: $(OUTPUT)moderr
+	$(call QUIET_INSTALL, moderr)
+	$(Q)$(INSTALL) -m 0755 -d $(DESTDIR)$(prefix)/sbin
+	$(Q)$(INSTALL) $(OUTPUT)moderr $(DESTDIR)$(prefix)/sbin/moderr
+
+install: install-bin
+
+uninstall:
+	$(call QUIET_UNINST, moderr)
+	$(Q)$(RM) -- $(DESTDIR)$(prefix)/sbin/moderr
