@@ -33,14 +33,17 @@ static volatile bool exiting = false;
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof(*(x)))
 
 static const struct argp_option opts[] = {
-	{ "verbose", 'v', NULL, 0, "Verbose debug output" },
-	{ "trace", 't', NULL, 0, "Enable trace output", 0 },
-	{ "modname", 'm', "MODNAME", 0, "Trace this module name only", 0 },
-	{ "modfunc", 'f', "MODFUNC", 0, "Trace this module function only", 0 },
-	{ "list", 'l', NULL, 0, "List available module functions", 0 },
-	{ "error", 'e', "ERROR", 0, "Inject this error", 0 },
-	{ NULL, 'h', NULL, OPTION_HIDDEN, "Show the full help", 0 },
-	{},
+	{ NULL, 0, NULL, 0, "Common filter:", 1 },
+	{ "modname", 'm', "MODNAME", 0, "Trace this module name only", 1 },
+	{ "modfunc", 'f', "MODFUNC", 0, "Trace this module function only", 1 },
+	{ NULL, 0, NULL, 0, "Error injection:", 2 },
+	{ "error", 'e', "ERROR", 0, "Inject this error", 2 },
+	{ NULL, 0, NULL, 0, "Debug and check:", 3 },
+	{ "list", 'l', NULL, 0, "List available module functions", 3 },
+	{ "trace", 't', NULL, 0, "Enable trace output", 3 },
+	{ "verbose", 'v', NULL, 0, "Verbose debug output", 3 },
+	{ NULL, 'h', NULL, OPTION_HIDDEN, "Show full help", -1 },
+	{}
 };
 
 static void help_modfunc(void)
