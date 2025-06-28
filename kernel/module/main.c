@@ -1280,6 +1280,32 @@ void __weak module_arch_freeing_init(struct module *mod)
 {
 }
 
+static noinline bool module_codetag_needs_module_section(struct module *mod,
+							 const char *name,
+							 unsigned long size)
+{
+#if defined(CONFIG_CODE_TAGGING)
+	return codetag_needs_module_section(mod, name, size);
+#else
+	return false;
+#endif
+}
+ALLOW_ERROR_INJECTION(module_codetag_needs_module_section, TRUE);
+
+static noinline void *module_codetag_alloc_module_section(struct module *mod,
+							  const char *name,
+							  unsigned long size,
+							  unsigned int prepend,
+							  unsigned long align)
+{
+#if defined(CONFIG_CODE_TAGGING)
+	return codetag_alloc_module_section(mod, name, size, prepend, align);
+#else
+	return NULL;
+#endif
+}
+ALLOW_ERROR_INJECTION(module_codetag_alloc_module_section, ERRNO);
+
 static noinline int module_memory_alloc(struct module *mod,
 					enum mod_mem_type type)
 {
@@ -2732,8 +2758,8 @@ static int move_module(struct module *mod, struct load_info *info)
 		 * Load codetag sections separately as they might still be used
 		 * after module unload.
 		 */
-		if (codetag_needs_module_section(mod, sname, shdr->sh_size)) {
-			dest = codetag_alloc_module_section(mod, sname, shdr->sh_size,
+		if (module_codetag_needs_module_section(mod, sname, shdr->sh_size)) {
+			dest = module_codetag_alloc_module_section(mod, sname, shdr->sh_size,
 					arch_mod_section_prepend(mod, i), shdr->sh_addralign);
 			if (WARN_ON(!dest)) {
 				ret = -EINVAL;

@@ -137,3 +137,20 @@ int BPF_KPROBE(module_memory_alloc, struct module *mod, enum mod_mem_type type)
 
 	return module_error_injection(ctx, mod, MODULE_MEMORY_ALLOC);
 }
+
+SEC("kprobe/module_codetag_alloc_module_section")
+int BPF_KPROBE(module_codetag_alloc_module_section, struct module *mod,
+	       const char *name, unsigned long aize, unsigned int prepend,
+	       unsigned long align)
+{
+	return module_error_injection(ctx, mod,
+				      MODULE_CODETAG_ALLOC_MODULE_SECTION);
+}
+
+SEC("kprobe/module_codetag_needs_module_section")
+int BPF_KPROBE(module_codetag_needs_module_section, struct module *mod,
+	       const char *name, unsigned long size)
+{
+	return module_error_injection(ctx, mod,
+				      MODULE_CODETAG_NEEDS_MODULE_SECTION);
+}

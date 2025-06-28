@@ -14,6 +14,8 @@ enum modfunc {
 	DO_INIT_MODULE,
 	MODULE_ENABLE_RODATA_AFTER_INIT,
 	MODULE_MEMORY_ALLOC,
+	MODULE_CODETAG_ALLOC_MODULE_SECTION,
+	MODULE_CODETAG_NEEDS_MODULE_SECTION,
 };
 
 struct event {
@@ -35,6 +37,10 @@ static inline const char *modfunc_to_string(enum modfunc fc)
 		return "module_enable_rodata_after_init()";
 	case MODULE_MEMORY_ALLOC:
 		return "module_memory_alloc()";
+	case MODULE_CODETAG_ALLOC_MODULE_SECTION:
+		return "module_codetag_alloc_module_section()";
+	case MODULE_CODETAG_NEEDS_MODULE_SECTION:
+		return "module_codetag_needs_module_section()";
 	default:
 		return "unknown";
 	}

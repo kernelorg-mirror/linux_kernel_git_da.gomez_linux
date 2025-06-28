@@ -59,7 +59,11 @@ static void help_modfunc(void)
 	       "- complete_formation\n"
 	       "- do_init_module\n"
 	       "- module_enable_rodata_ro_after_init\n"
-	       "- module_memory_alloc\n\n");
+	       "- module_memory_alloc\n"
+	       "---\n"
+	       "- module_codetag_alloc_module_section\n"
+	       "- module_codetag_needs_module_section\n"
+	       "\n\n");
 }
 
 static enum modfunc string_to_modfunc(char *arg)
@@ -76,6 +80,14 @@ static enum modfunc string_to_modfunc(char *arg)
 
 	if (strncmp(arg, "module_memory_alloc", strlen(arg)) == 0)
 		return MODULE_MEMORY_ALLOC;
+
+	if (strncmp(arg, "module_codetag_alloc_module_section", strlen(arg)) ==
+	    0)
+		return MODULE_CODETAG_ALLOC_MODULE_SECTION;
+
+	if (strncmp(arg, "module_codetag_needs_module_section", strlen(arg)) ==
+	    0)
+		return MODULE_CODETAG_NEEDS_MODULE_SECTION;
 
 	return UNKNOWN;
 }

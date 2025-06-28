@@ -220,7 +220,7 @@ static int codetag_module_init(struct codetag_type *cttype, struct module *mod)
 #define CODETAG_SECTION_PREFIX	".codetag."
 
 /* Some codetag types need a separate module section */
-bool codetag_needs_module_section(struct module *mod, const char *name,
+bool noinline codetag_needs_module_section(struct module *mod, const char *name,
 				  unsigned long size)
 {
 	const char *type_name;
@@ -247,8 +247,9 @@ bool codetag_needs_module_section(struct module *mod, const char *name,
 
 	return ret;
 }
+ALLOW_ERROR_INJECTION(codetag_needs_module_section, TRUE);
 
-void *codetag_alloc_module_section(struct module *mod, const char *name,
+void noinline *codetag_alloc_module_section(struct module *mod, const char *name,
 				   unsigned long size, unsigned int prepend,
 				   unsigned long align)
 {
@@ -272,6 +273,7 @@ void *codetag_alloc_module_section(struct module *mod, const char *name,
 
 	return ret;
 }
+ALLOW_ERROR_INJECTION(codetag_alloc_module_section, ERRNO);
 
 void codetag_free_module_sections(struct module *mod)
 {
