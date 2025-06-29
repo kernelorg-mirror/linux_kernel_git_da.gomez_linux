@@ -27,8 +27,8 @@ static __always_inline bool filter_module_name(struct module *mod)
 	bpf_probe_read_str(modname, sizeof(modname), mod->name);
 
 	if (!filter_modname ||
-	    filter_modname && bpf_strncmp(modname, MODULE_NAME_LEN,
-					  (const char *)targ_modname) != 0)
+	    (filter_modname && bpf_strncmp(modname, MODULE_NAME_LEN,
+					  (const char *)targ_modname) != 0))
 		return false;
 
 	return true;
@@ -36,7 +36,7 @@ static __always_inline bool filter_module_name(struct module *mod)
 
 static __always_inline bool filter_module_func(enum modfunc fc)
 {
-	if (!filter_modfunc || filter_modfunc && targ_modfunc != fc)
+	if (!filter_modfunc || (filter_modfunc && targ_modfunc != fc))
 		return false;
 
 	return true;
