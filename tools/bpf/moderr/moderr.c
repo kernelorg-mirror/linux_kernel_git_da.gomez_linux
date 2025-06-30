@@ -165,15 +165,17 @@ static void sig_handler(int sig)
 static int handle_event(void *ctx, void *data, size_t data_sz)
 {
 	const struct event *e = data;
-
-	if (!env.trace)
-		return 0;
+	struct event_ctx *ectx = ctx;
 
 	if (e->dbg) {
 		if (env.verbose)
 			printf("%s\n", e->msg);
 		return 0;
 	}
+
+	ectx->counter++;
+	if (!env.trace)
+		return 0;
 
 	printf("%-10s %-5d %-20s\n", e->modname, e->err,
 	       modfunc_to_string(e->func));
@@ -185,6 +187,7 @@ int main(int argc, char **argv)
 {
 	struct ring_buffer *rb = NULL;
 	struct moderr_bpf *obj;
+	struct event_ctx ectx;
 	int err;
 
 	err = argp_parse(&argp, argc, argv, 0, NULL, NULL);
@@ -238,7 +241,7 @@ int main(int argc, char **argv)
 
 	printf("Monitoring module error injection... Hit Ctrl-C to end.\n");
 
-	rb = ring_buffer__new(bpf_map__fd(obj->maps.rb), handle_event, NULL,
+	rb = ring_buffer__new(bpf_map__fd(obj->maps.rb), handle_event, &ectx,
 			      NULL);
 	if (!rb) {
 		err = -1;
@@ -261,6 +264,7 @@ int main(int argc, char **argv)
 		}
 	}
 
+	printf("Total events: %d\n", ectx.counter);
 	printf("\n");
 
 cleanup:

@@ -18,6 +18,10 @@ enum modfunc {
 	MODULE_CODETAG_NEEDS_MODULE_SECTION,
 };
 
+struct event_ctx {
+	int counter;
+};
+
 struct event {
 	char modname[MODULE_NAME_LEN];
 	int err;
