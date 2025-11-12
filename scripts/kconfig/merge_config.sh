@@ -106,6 +106,14 @@ if [ -z "$KCONFIG_CONFIG" ]; then
 	else
 		KCONFIG_CONFIG=.config
 	fi
+else
+	# Derive OUTPUT from KCONFIG_CONFIG when -O is not provided
+	if [ "$OUTPUT" = "." ]; then
+		CONFIG_DIR=$(dirname "$KCONFIG_CONFIG")
+		if [ "$CONFIG_DIR" != "." ]; then
+			OUTPUT=$(readlink -m "$CONFIG_DIR")
+		fi
+	fi
 fi
 
 INITFILE=$1
