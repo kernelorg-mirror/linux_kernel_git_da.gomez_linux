@@ -51,7 +51,7 @@ pub mod block;
 pub mod bug;
 pub mod build_assert;
 pub mod clk;
-#[cfg(CONFIG_CONFIGFS_FS)]
+#[cfg(CONFIG_CONFIGFS_FS = "y")]
 pub mod configfs;
 pub mod cpu;
 #[cfg(CONFIG_CPU_FREQ)]
