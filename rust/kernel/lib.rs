@@ -122,6 +122,8 @@ pub mod pwm;
 pub mod rbtree;
 pub mod regulator;
 pub mod revocable;
+#[cfg(CONFIG_XARRAY_RUST)]
+pub mod rxarray;
 pub mod safety;
 pub mod scatterlist;
 pub mod security;
